@@ -1,1 +1,43 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "eVideos"
+
 include ':app'
+
+/* ✅ AndroidViewAnimations (YoYo + Techniques)
+   Actual module is inside AndroidViewAnimations/library */
+include ':AndroidViewAnimations'
+project(':AndroidViewAnimations').projectDir = new File(rootDir, 'AndroidViewAnimations/library')
+
+/* ✅ AndroidVideoCache (HttpProxyCacheServer)
+   Actual module is inside AndroidVideoCache/library */
+include ':AndroidVideoCache'
+project(':AndroidVideoCache').projectDir = new File(rootDir, 'AndroidVideoCache/library')
+
+/* ✅ AnimationEasingFunctions (Glider)
+   Actual module is inside AnimationEasingFunctions/library */
+include ':AnimationEasingFunctions'
+project(':AnimationEasingFunctions').projectDir = new File(rootDir, 'AnimationEasingFunctions/library')
+
+/* ✅ Autocomplete
+   Actual module is inside Autocomplete/library */
+include ':ChipsLayoutManager'
+project(':ChipsLayoutManager').projectDir = new File(rootDir, 'ChipsLayoutManager/chipslayoutmanager')
+
+include ':ZoomLayout'
+project(':ZoomLayout').projectDir = new File(rootDir, 'ZoomLayout/library')
