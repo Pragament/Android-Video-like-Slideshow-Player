@@ -386,30 +386,59 @@ public class SlideShowActivity extends AppCompatActivity implements MediaControl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 1. Set Fullscreen and Content View
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_testing_new_login);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        // 2. ✅ CREATE ATTRIBUTION CONTEXT (Fixes Android 14 Audio Hardening)
+        Context attributionContext;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Note: "audioPlayback" must be declared in your AndroidManifest.xml
+            attributionContext = createAttributionContext("audioPlayback");
+        } else {
+            attributionContext = getApplicationContext();
+        }
+
+        // 3. Initialize Analytics and FullScreen
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setFullScreen();
 
-        final MediaController mc = new MediaController(this);
-        tts = new TextToSpeech(this, this);
+        // 4. ✅ INITIALIZE TTS WITH ATTRIBUTION CONTEXT
+        // Passing 'attributionContext' instead of 'this' prevents background muting
+        tts = new TextToSpeech(attributionContext, this);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // 5. UI Bindings
         relative = findViewById(R.id.ChildRelative);
         tv_credits = findViewById(R.id.tv_credits);
         background_one = findViewById(R.id.background_one);
+        rl = findViewById(R.id.firstLayout);
+        video = findViewById(R.id.vv);
+        Pause = findViewById(R.id.Pause);
+        volume_mute_toggle = findViewById(R.id.volume_mute_toggle);
+        speedSeekBar = findViewById(R.id.speedSeekBar);
+        speedSeekBarWrapper = findViewById(R.id.speedSeekBarWrapper);
+        NextButton = findViewById(R.id.Next);
+        replayButton = findViewById(R.id.replay);
+        PreviousButton = findViewById(R.id.Previous);
 
-        // ✅ UPDATED ZoomLayout (Otaliastudios)
-        ZoomLayout mZoomLayout = findViewById(R.id.zoomLayout);
+        // 6. ✅ UPDATED ZoomLayout (Otaliastudios Namespace)
+        com.otaliastudios.zoom.ZoomLayout mZoomLayout = findViewById(R.id.zoomLayout);
 
-        // Min/Max Zoom using ZoomEngine
-        mZoomLayout.getEngine().setMinZoom(1.0f, ZoomEngine.TYPE_ZOOM);
-        mZoomLayout.getEngine().setMaxZoom(3.0f, ZoomEngine.TYPE_ZOOM);
+        // Set Zoom Constraints
+        mZoomLayout.getEngine().setMinZoom(1.0f, com.otaliastudios.zoom.ZoomApi.TYPE_ZOOM);
+        mZoomLayout.getEngine().setMaxZoom(3.0f, com.otaliastudios.zoom.ZoomApi.TYPE_ZOOM);
 
-        // Tap -> normal click listener
+        // 7. Media Controller Setup
+        final MediaController mc = new MediaController(this);
+        mc.setMediaPlayer(this);
+        mc.setEnabled(true);
+        mc.setAnchorView(background_one);
+
+        // Tap to Show/Hide Controls
         mZoomLayout.setOnClickListener(v -> {
             Bundle fbundle = new Bundle();
             fbundle.putString(FirebaseAnalytics.Param.LEVEL, String.valueOf(NextCount));
@@ -427,24 +456,22 @@ public class SlideShowActivity extends AppCompatActivity implements MediaControl
             }
         });
 
-        // Zoom/Pan Updates using ZoomEngine.Listener
-        mZoomLayout.getEngine().addListener(new ZoomEngine.Listener() {
+        // Zoom Engine Listener
+        mZoomLayout.getEngine().addListener(new com.otaliastudios.zoom.ZoomEngine.Listener() {
             @Override
-            public void onUpdate(@NonNull ZoomEngine engine, @NonNull Matrix matrix) {
-                // replaces old onZoom/onPan
+            public void onUpdate(@NonNull com.otaliastudios.zoom.ZoomEngine engine, @NonNull android.graphics.Matrix matrix) {
+                // Logic for zoom updates if needed
             }
 
             @Override
-            public void onIdle(@NonNull ZoomEngine engine) {
+            public void onIdle(@NonNull com.otaliastudios.zoom.ZoomEngine engine) {
                 Bundle fbundle = new Bundle();
                 fbundle.putString(FirebaseAnalytics.Param.LEVEL, String.valueOf(NextCount));
                 mFirebaseAnalytics.logEvent("VIDEO_INTERACT_ZOOM_PAN_IDLE", fbundle);
             }
         });
 
-        rl = findViewById(R.id.firstLayout);
-        video = findViewById(R.id.vv);
-
+        // 8. Video and Audio Logic
         video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -453,26 +480,12 @@ public class SlideShowActivity extends AppCompatActivity implements MediaControl
             }
         });
 
-        imagesList = new ArrayList<>();
-
-        initSvgFunc();
-        loadAnimations();
-
-        cacheProxy = MyApplication.getProxy(SlideShowActivity.this);
-
-        Pause = findViewById(R.id.Pause);
-        volume_mute_toggle = findViewById(R.id.volume_mute_toggle);
-
-        speedSeekBar = findViewById(R.id.speedSeekBar);
-        speedSeekBarWrapper = findViewById(R.id.speedSeekBarWrapper);
-
         speedSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
             @Override
             public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-
                 Bundle fbundle = new Bundle();
                 fbundle.putString(FirebaseAnalytics.Param.LEVEL, String.valueOf(NextCount));
-                fbundle.putString(FirebaseAnalytics.Param.TAX, String.valueOf(progressFloat / 200));
+                fbundle.putString("speed_rate", String.valueOf(progressFloat / 200));
                 mFirebaseAnalytics.logEvent("VIDEO_SPEED", fbundle);
 
                 tts.setSpeechRate(progressFloat / 200);
@@ -481,32 +494,28 @@ public class SlideShowActivity extends AppCompatActivity implements MediaControl
             }
         });
 
-        NextButton = findViewById(R.id.Next);
-        replayButton = findViewById(R.id.replay);
-        PreviousButton = findViewById(R.id.Previous);
-
-        loadJSONFromAsset(SlideShowActivity.this);
-
-        mc.setMediaPlayer(this);
-        mc.setEnabled(true);
-        mc.offsetLeftAndRight(1);
-        mc.setAnchorView(background_one);
-
         volume_mute_toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mc.show(5000);
                 if (!isButtonMute) {
                     isButtonMute = true;
-                    mp.pause();
+                    if (mp != null) mp.pause(); // Added null check for safety
                     volume_mute_toggle.setImageResource(R.drawable.ic_mute_icon);
                 } else {
                     isButtonMute = false;
-                    mp.start();
+                    if (mp != null) mp.start();
                     volume_mute_toggle.setImageResource(R.drawable.ic_speaker_icon);
                 }
             }
         });
+
+        // 9. Data Loading
+        imagesList = new java.util.ArrayList<>();
+        initSvgFunc();
+        loadAnimations();
+        cacheProxy = MyApplication.getProxy(SlideShowActivity.this);
+        loadJSONFromAsset(SlideShowActivity.this);
     }
 
     // -------------------- REST OF YOUR ORIGINAL METHODS BELOW (UNCHANGED) --------------------

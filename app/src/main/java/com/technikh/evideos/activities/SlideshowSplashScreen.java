@@ -86,6 +86,42 @@ public class SlideshowSplashScreen extends AppCompatActivity {
         } else {
             proceedToNextActivity();
         }
+
+
+
+        SlideshowGetDataService service =
+                SlideshowRetrofitInstance
+                        .getRetrofitInstance()
+                        .create(SlideshowGetDataService.class);
+
+        Call<SlideshowJsonModel> call = service.getAllJson();
+
+        Log.d("API_TEST", "🚀 API call started");
+
+        call.enqueue(new Callback<SlideshowJsonModel>() {
+            @Override
+            public void onResponse(Call<SlideshowJsonModel> call,
+                                   Response<SlideshowJsonModel> response) {
+
+                Log.d("API_TEST", "✅ HTTP Code = " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("API_TEST", "🎉 DATA LOADED SUCCESSFULLY");
+
+                    // Optional: log something from JSON
+                    Log.d("API_TEST", "JSON = " + response.body().toString());
+
+                } else {
+                    Log.e("API_TEST", "⚠️ Response error / empty body");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SlideshowJsonModel> call, Throwable t) {
+                Log.e("API_TEST", "❌ API FAILED", t);
+            }
+        });
+
     }
 
     private void LoadImages() {
