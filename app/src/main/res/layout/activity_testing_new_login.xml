@@ -1,83 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2019. Nikhil Dubbaka from TechNikh.com under GNU AFFERO GENERAL PUBLIC LICENSE
   ~ Copyright and license notices must be preserved.
   ~ When a modified version is used to provide a service over a network, the complete source code of the modified version must be made available.
-  -->
+-->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative"
-    android:layout_gravity="right"
-    android:gravity="right"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SlideShowActivity">
-    <!--  <FrameLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent">
+    tools:context="com.technikh.evideos.activities.SlideShowActivity">
 
-          <ImageView
-              android:id="@+id/background_one"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:scaleType="center"
-              android:src="@drawable/appwidget_preview" />
-
-          <ImageView
-              android:id="@+id/background_two"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:scaleType="fitCenter"
-              android:src="@drawable/appwidget_preview" />
-
-      </FrameLayout>
-
-      <ImageView
-          android:id="@+id/ImageView"
-            scrolling_image_view:src="@drawable/appwidget_preview"
-          android:visibility="invisible"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:scaleType="center" />
-
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:id="@+id/background_one"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            scrolling_image_view:speed="0.5dp"
-            scrolling_image_view:src="@drawable/pyramids" />
-
-        <com.q42.android.scrollingimageview.ScrollingImageView
-            android:id="@+id/scrolling_foreground"
-            android:visibility="invisible"
-            android:layout_gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            scrolling_image_view:speed="0.01dp"
-            scrolling_image_view:src="@drawable/appwidget_preview" />
-    </FrameLayout>
-     <com.q42.android.scrollingimageview.ScrollingImageView
-        android:id="@+id/background_one"
-        scrolling_image_view:src="@drawable/pyramids"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        scrolling_image_view:speed=".2dp" />
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/background_one"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <com.flaviofaria.kenburnsview.KenBurnsView
-        android:id="@+id/background_one"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />  -->
-    <com.shopgun.android.zoomlayout.ZoomLayout
+    <!-- ✅ ZoomLayout + Background Image -->
+    <com.otaliastudios.zoom.ZoomLayout
         android:id="@+id/zoomLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -87,68 +24,63 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layerType="hardware"
-            android:scaleType="centerInside" />
-    </com.shopgun.android.zoomlayout.ZoomLayout>
+            android:scaleType="centerCrop" />
 
+    </com.otaliastudios.zoom.ZoomLayout>
+
+    <!-- ✅ VideoView on top of background -->
     <VideoView
         android:id="@+id/vv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:visibility="gone" />
-    <!-- Images wrapper behind text relative = findViewById(R.id.ChildRelative);-->
+
+    <!-- ✅ Images wrapper behind text -->
     <RelativeLayout
         android:id="@+id/ChildRelative"
-        android:layout_gravity="right"
-        android:gravity="right"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></RelativeLayout>
-    <!-- Text Wrapper -->
+        android:layout_height="match_parent" />
+
+    <!-- ✅ Text Wrapper -->
     <LinearLayout
         android:id="@+id/firstLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" />
 
+    <!-- Credits -->
     <TextView
         android:id="@+id/tv_credits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="2dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="6dp"
         android:background="@color/app_grey_transparency_80"
+        android:padding="6dp"
+        android:textColor="@android:color/white"
         android:visibility="gone" />
 
+    <!-- Speed Seekbar -->
     <LinearLayout
         android:id="@+id/speedSeekBarWrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="90dp"
         android:background="@color/app_row_bg_grey"
         android:orientation="horizontal"
-        android:visibility="invisible">
+        android:padding="8dp"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Speed:" />
-        <!--
-                <SeekBar
-                    android:id="@+id/speedSeekBar"
-                    style="@style/Widget.AppCompat.SeekBar.Discrete"
-                    android:layout_width="110dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:max="200"
-                    android:progress="100" /> -->
+            android:layout_marginEnd="8dp"
+            android:text="Speed:"
+            android:textColor="@android:color/white" />
+
         <com.xw.repo.BubbleSeekBar
             android:id="@+id/speedSeekBar"
             android:layout_width="wrap_content"
@@ -166,79 +98,58 @@
             app:bsb_show_section_text="true"
             app:bsb_show_thumb_text="true"
             app:bsb_track_color="@color/app_red" />
+
     </LinearLayout>
 
+    <!-- Bottom Controls -->
     <LinearLayout
+        android:id="@+id/bottomControls"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="2dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="6dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone">
 
         <ImageView
             android:id="@+id/Previous"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="1dp"
-            android:gravity="center"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
             android:src="@mipmap/back"
-            android:text=" Previous "
-            android:textAllCaps="false"
-            android:textColor="#fff"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/Pause"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="1dp"
-            android:gravity="center"
-            android:src="@mipmap/pause"
-            android:text="Pause"
-            android:textAllCaps="false"
-            android:textColor="#fff" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
+            android:src="@mipmap/pause" />
 
         <ImageView
             android:id="@+id/replay"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="1dp"
-            android:gravity="center"
-            android:text="Replay"
-            android:textAllCaps="false"
-            android:textColor="#fff"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
             app:srcCompat="@drawable/ic_repeat" />
 
         <ImageView
             android:id="@+id/Next"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="1dp"
-            android:gravity="center"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
             android:src="@mipmap/next"
-            android:text=" Next "
-            android:textAllCaps="false"
-            android:textColor="#fff"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/volume_mute_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="1dp"
-            android:gravity="center"
-            android:text="Mute"
-            android:textAllCaps="false"
-            android:textColor="#fff"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
             app:srcCompat="@drawable/ic_speaker_icon" />
 
-
     </LinearLayout>
+
 </RelativeLayout>

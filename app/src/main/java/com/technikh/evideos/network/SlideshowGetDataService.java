@@ -6,7 +6,6 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface SlideshowGetDataService {
-  @GET("raw/EEH7viWc")
-//  @GET("bins/t9e8x")
-  Call<SlideshowJsonModel> getAllJson();
+    @GET("slideshow/original.json")
+    Call<SlideshowJsonModel> getAllJson();
 }
